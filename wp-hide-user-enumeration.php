@@ -11,10 +11,15 @@ if (!defined('ABSPATH')) {
 }
 
 // ==============================================================================
+// WICHTIG: 'use' Anweisungen müssen in PHP immer im globalen Bereich (oben) stehen
+// ==============================================================================
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+// ==============================================================================
 // 0. GitHub Plugin Update Checker (PUC) - ROBUST VERSION
 // ==============================================================================
 
-// 1. Absoluter Pfad zur Datei (behebt den Ladefehler)
+// 1. Absoluter Pfad zur Datei
 $puc_file = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 
 if (file_exists($puc_file)) {
@@ -23,21 +28,20 @@ if (file_exists($puc_file)) {
     // Nutzt den aktuellen Ordnernamen dynamisch als "Slug"
     $plugin_slug = basename(__DIR__); 
     
-    use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
     $myUpdateChecker = PucFactory::buildUpdateChecker(
-        'https://github.com/DEIN_GITHUB_BENUTZERNAME/wp-hide-user-enumeration/', // Deine Repo-URL
+        'https://github.com/barti-mcfly/wp-hide-user-enumeration/', // Deine Repo-URL
         __FILE__,
-        $plugin_slug // Erkennt jetzt automatisch "wp-hide-user-enumeration-main"
+        $plugin_slug // Erkennt jetzt automatisch z.B. "wp-hide-user-enumeration-main"
     );
 
     $myUpdateChecker->setBranch('main');
 } else {
-    // Optional: Warnung im Admin-Bereich, falls der Ordner fehlt
+    // Warnung im Admin-Bereich, falls der Ordner fehlt
     add_action('admin_notices', function() {
         echo '<div class="error"><p>WP Hide User Enumeration: Der Ordner <b>plugin-update-checker</b> wurde nicht gefunden. Updates sind deaktiviert.</p></div>';
     });
 }
+
 
 // ==============================================================================
 // 1. Blockierung der Autoren-Scans (Parameter & Permalinks)
@@ -71,7 +75,7 @@ function wp_hue_restrict_rest_users($result) {
         return $result;
     }
 
-    // Erlaubt Administratoren / befugten Nutzern weiterhin den Zugriff (Wichtig für Page Builder)
+    // Erlaubt Administratoren / befugten Nutzern weiterhin den Zugriff
     if (is_user_logged_in() && current_user_can('list_users')) {
         return $result;
     }
@@ -113,8 +117,6 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 
 
 // ==============================================================================
-// 5. Deaktivierung von XML-RPC (Basis-Schutz, falls .htaccess nicht greift)
+// 5. Deaktivierung von XML-RPC
 // ==============================================================================
 add_filter('xmlrpc_enabled', '__return_false');
-
-?>
