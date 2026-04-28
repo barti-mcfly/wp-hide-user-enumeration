@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: WP Hide User Enumeration & Security
-Description: Blockiert gängige WordPress-Pfade zur Benutzer-Aufzählung, sichert die REST API, deaktiviert Benutzer-Sitemaps und schützt vor XML-RPC Angriffen. Inklusive GitHub-Updates.
-Version: 1.0.0
+Description: Blocks common WordPress paths for user enumeration, secures the REST API, disables user sitemaps, and protects against XML-RPC attacks. Includes GitHub updates.
+Version: 1.1.0
 Author: behrmedia
 */
 
