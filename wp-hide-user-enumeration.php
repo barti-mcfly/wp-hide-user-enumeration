@@ -11,20 +11,33 @@ if (!defined('ABSPATH')) {
 }
 
 // ==============================================================================
-// 0. GitHub Plugin Update Checker (PUC)
+// 0. GitHub Plugin Update Checker (PUC) - ROBUST VERSION
 // ==============================================================================
-require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-$myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/barti-mcfly/wp-hide-user-enumeration/',
-    __FILE__,
-    'wp-hide-user-enumeration'
-);
+// 1. Absoluter Pfad zur Datei (behebt den Ladefehler)
+$puc_file = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 
-// Weist PUC an, im Hauptzweig (main) nach Updates zu suchen
-$myUpdateChecker->setBranch('main');
+if (file_exists($puc_file)) {
+    require $puc_file;
+    
+    // Nutzt den aktuellen Ordnernamen dynamisch als "Slug"
+    $plugin_slug = basename(__DIR__); 
+    
+    use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
+    $myUpdateChecker = PucFactory::buildUpdateChecker(
+        'https://github.com/DEIN_GITHUB_BENUTZERNAME/wp-hide-user-enumeration/', // Deine Repo-URL
+        __FILE__,
+        $plugin_slug // Erkennt jetzt automatisch "wp-hide-user-enumeration-main"
+    );
+
+    $myUpdateChecker->setBranch('main');
+} else {
+    // Optional: Warnung im Admin-Bereich, falls der Ordner fehlt
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>WP Hide User Enumeration: Der Ordner <b>plugin-update-checker</b> wurde nicht gefunden. Updates sind deaktiviert.</p></div>';
+    });
+}
 
 // ==============================================================================
 // 1. Blockierung der Autoren-Scans (Parameter & Permalinks)
