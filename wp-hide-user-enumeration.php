@@ -17,7 +17,7 @@ require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/DEIN_GITHUB_BENUTZERNAME/wp-hide-user-enumeration/',
+    'https://github.com/barti-mcfly/wp-hide-user-enumeration/',
     __FILE__,
     'wp-hide-user-enumeration'
 );
