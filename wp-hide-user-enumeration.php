@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP Hide User Enumeration & Security
 Description: Blockiert gängige WordPress-Pfade zur Benutzer-Aufzählung, sichert die REST API, deaktiviert Benutzer-Sitemaps und schützt vor XML-RPC Angriffen. Inklusive GitHub-Updates.
-Version: 1.1.3
+Version: 1.1.4
 Author: behrmedia
 Author URI: https://behrmedia.de
 */
@@ -30,7 +30,7 @@ if (file_exists($puc_file)) {
     $plugin_slug = basename(__DIR__); 
     
     $myUpdateChecker = PucFactory::buildUpdateChecker(
-        'https://github.com/DEIN_GITHUB_BENUTZERNAME/wp-hide-user-enumeration/', // <-- HIER DEINEN NAMEN EINTRAGEN
+        'https://github.com/barti-mcfly/wp-hide-user-enumeration/', // <-- HIER DEINEN NAMEN EINTRAGEN
         __FILE__,
         $plugin_slug // Erkennt jetzt automatisch z.B. "wp-hide-user-enumeration-main"
     );
@@ -118,11 +118,12 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 
 
 // ==============================================================================
-// 5. Deaktivierung von XML-RPC (Komplette Blockade für Icinga-Scans)
+// 5. Deaktivierung von XML-RPC (Aggressive Blockade für Icinga-Scans)
 // ==============================================================================
 add_filter('xmlrpc_enabled', '__return_false');
 
-// Leert alle Methoden, damit system.listMethods einen Fehler zurückgibt
-add_filter('xmlrpc_methods', function($methods) {
-    return array();
+// Beendet die Anfrage sofort mit einem 403 Forbidden, sobald XML-RPC aufgerufen wird
+add_action('xmlrpc_call', function($action) {
+    header('HTTP/1.1 403 Forbidden');
+    die('XML-RPC is disabled.');
 });
