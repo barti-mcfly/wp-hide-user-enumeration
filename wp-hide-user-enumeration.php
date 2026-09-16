@@ -10,6 +10,13 @@ Author URI: https://behrmedia.de
 if (!defined('ABSPATH')) {
     exit;
 }
+// ==============================================================================
+// ABSOLUTER XML-RPC KILL-SWITCH (Muss ganz oben stehen!)
+// ==============================================================================
+if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
+    header('HTTP/1.1 403 Forbidden');
+    die('XML-RPC is completely disabled.');
+}
 
 // ==============================================================================
 // WICHTIG: 'use' Anweisungen müssen in PHP immer im globalen Bereich (oben) stehen
@@ -115,15 +122,3 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
     }
     return $provider;
 }, 10, 2);
-
-
-// ==============================================================================
-// 5. Deaktivierung von XML-RPC (Aggressive Blockade für Icinga-Scans)
-// ==============================================================================
-add_filter('xmlrpc_enabled', '__return_false');
-
-// Beendet die Anfrage sofort mit einem 403 Forbidden, sobald XML-RPC aufgerufen wird
-add_action('xmlrpc_call', function($action) {
-    header('HTTP/1.1 403 Forbidden');
-    die('XML-RPC is disabled.');
-});
